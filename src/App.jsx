@@ -1,134 +1,115 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 
-const apiUrls = {
-  username: 'https://playground.4geeks.com/todo/users/havli',
-  todos: 'https://playground.4geeks.com/todo/todos/',
-  create: 'https://playground.4geeks.com/todo/todos/havli',
-};
-
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [usertodos, setUserTodos] = useState({});
-  const [error, setError] = useState(null);
-  const [newtask, setNewtask] = useState('');
+  const [userName, setUserName] = useState('');
+  const [taskLabel, setTaskLabel] = useState('');
+  const [userTodos, setUserTodos] = useState([]);
+  const [isUser, setIsUser] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    getListTodos();
-    return () => {
-      // Función de limpieza
-    };
-  }, []);
+  const apiUrl = 'https://playground.4geeks.com/todo';
 
-  const postToDo = async () => {
+  const handleApiError = (error) => {
+    console.error('Error al realizar la solicitud:', error);
+    setErrorMessage('Error en la carga de datos. Intenta de nuevo.');
+  };
+
+  const createUser = async () => {
     try {
-      const response = await fetch(apiUrls.create, {
+      const response = await fetch(`${apiUrl}/users/${userName}`, {
         method: 'POST',
-        body: JSON.stringify({ label: newtask, is_done: false }),
+        body: JSON.stringify({ name: userName }),
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const data = await response.json();
-      getListTodos();
-      return data;
+
+      if (!response.ok) throw new Error('Error al crear el usuario.');
+
+      await response.json();
+      setIsUser(true);
     } catch (error) {
-      console.error('Error:', error);
-      setError(error);
+      handleApiError(error);
     }
   };
 
-  const getListTodos = async () => {
+  const createTask = async () => {
     try {
-      const response = await fetch(apiUrls.username);
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const data = await response.json();
-      setUsername(data.name);
-      setUserTodos(data.todos);
-    } catch (error) {
-      console.error('Error:', error);
-      setError(error);
-    }
-  };
-
-  const updateTodo = async (id, label, is_done) => {
-    try {
-      const response = await fetch(`${apiUrls.todos}${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ label, is_done }),
+      const response = await fetch(`${apiUrl}/todos/${userName}`, {
+        method: 'POST',
+        body: JSON.stringify({ label: taskLabel, is_done: false }),
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+
+      if (!response.ok) throw new Error('Error al crear la tarea.');
+
+      const taskCreated = await response.json();
+      setUserTodos(prev => [...prev, taskCreated]);
+      setTaskLabel('');
     } catch (error) {
-      console.error('Error:', error);
-      setError(error);
+      handleApiError(error);
     }
   };
 
-  const deleteTodo = async (id) => {
+  const deleteTask = async (todoId) => {
     try {
-      const response = await fetch(`${apiUrls.todos}${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      getListTodos();
+      const response = await fetch(`${apiUrl}/todos/${todoId}`, { method: 'DELETE' });
+
+      if (!response.ok) throw new Error('Error al eliminar la tarea.');
+
+      setUserTodos(prev => prev.filter(task => task.id !== todoId));
     } catch (error) {
-      console.error('Error:', error);
-      setError(error);
+      handleApiError(error);
     }
   };
 
   return (
-    <main>
+    <main className='app-container'>
       <header className='header'>
-        <h1>Todo List</h1>
+        <h1>Todo List with React</h1>
       </header>
-      {error ? (
-        <section className="error-notice">
-          <div className="oaerror danger">
-            <strong>Error:</strong> {error.message}
+      {errorMessage && (
+        <section className='error-notice'>
+          <div className="error-message">
+            <strong>Error:</strong> {errorMessage}
           </div>
+        </section>
+      )}
+      {!isUser ? (
+        <section className='user-input-section'>
+          <input
+            type='text'
+            placeholder='Nombre de usuario'
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            className='input-field'
+          />
+          <button onClick={createUser} className='button green-button'>Crear Usuario</button>
         </section>
       ) : (
         <>
-          <section className='todo-input-section'>
-            <div className='todo-input-wrapper'>
-              <input type='text' id='todo-input' placeholder='Escribe la tarea' onChange={(e) => { setNewtask(e.target.value) }} />
-              <button id='add-button' onClick={() => { postToDo() }}>Agregar</button>
-            </div>
+          <section className='task-input-section'>
+            <input
+              type='text'
+              placeholder='Nueva tarea'
+              value={taskLabel}
+              onChange={(e) => setTaskLabel(e.target.value)}
+              className='input-field'
+            />
+            <button onClick={createTask} className='button green-button'>Agregar Tarea</button>
           </section>
-
           <section className='todo-list-section'>
-            {usertodos && usertodos.length ?
-              <ul id='todo-list'>
-                {usertodos.map((todo) =>
+            {userTodos.length > 0 ? (
+              <ul className='todo-list'>
+                {userTodos.map((todo) => (
                   <li className='todo-item' key={todo.id}>
-                    {
-                      !todo.is_done ?
-                        <>
-                          <span className='task-text'>{todo.label}</span>
-                          <button className='complete-button' onClick={() => { updateTodo(todo.id, todo.label, true) }}>Marcar como hecha</button>
-                        </>
-                        :
-                        <>
-                          <span className='task-text is-done'>{todo.label}</span>
-                          <button className='complete-button' onClick={() => { updateTodo(todo.id, todo.label, false) }}>Marcar como no hecha</button>
-                        </>
-                    }
-                    <button className='delete-button' onClick={() => { deleteTodo(todo.id) }}>Eliminar</button>
+                    <span className='task-text'>{todo.label}</span>
+                    <button className='button yellow-button' onClick={() => deleteTask(todo.id)}>Eliminar</button>
                   </li>
-                )}
+                ))}
               </ul>
-              :
-              <div className="dots"></div>
-            }
+            ) : (
+              <div className='empty-list'>No hay tareas en la lista.</div>
+            )}
           </section>
         </>
       )}

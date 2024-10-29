@@ -1,144 +1,52 @@
-#root {
-	background-color: #fff;
-	border-radius: 10px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-	width: 100%;
-	max-width: 600px;
-	padding: 2rem;
-}
-
-.header {
+.app-container {
 	text-align: center;
-	margin-bottom: 1rem;
-	font-size: 1rem;
-}
-
-.todo-input-section {
-  margin-bottom: 1rem;
-}
-
-.todo-input-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-#todo-input {
+	padding: 20px;
+  }
+  
+  .input-field {
+	margin: 10px;
+	padding: 10px;
 	width: 80%;
-	padding: 0.5rem;
-	border: 2px solid green;
 	border-radius: 5px;
-}
-
-#add-button {
-	padding: 1rem;
-	background-color: green;
-	color: white;
+	border: 1px solid #ccc;
+  }
+  
+  .button {
+	margin: 10px;
+	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
-}
-
-#add-button:hover {
-	background-color: lightgreen;
-	color: #333;
-}
-
-#todo-list {
-	list-style-type: none;
-}
-
-.todo-item {
+	font-weight: bold;
+  }
+  
+  .green-button {
+	background-color: #28a745; /* Verde */
+	color: white;
+  }
+  
+  .yellow-button {
+	background-color: #ffc107; /* Amarillo */
+	color: black;
+  }
+  
+  .error-notice {
+	color: red;
+  }
+  
+  .todo-list {
+	list-style: none;
+	padding: 0;
+  }
+  
+  .todo-item {
 	display: flex;
 	justify-content: space-between;
-	padding: 0.5rem 0;
-}
-
-.task-text {
-  align-content: center;
-}
-
-button {
-	border: none;
-	border-radius: 5px;
-	padding: 0.5rem;
-	cursor: pointer;
-}
-
-.complete-button {
-	background-color: goldenrod;
-	color: white;
-}
-
-.complete-button:hover {
-	background-color: lightgoldenrodyellow;
-	color: #333;
-}
-
-.delete-button {
-	background-color: red;
-	color: white;
-}
-
-.delete-button:hover {
-	background-color: black;
-}
-
-.delete-button:active {
-	background-color: linear-gradient(to bottom right, red 0%, black 100%);
-}
-
-.dots {
-  width: 21.1px;
-  height: 21.1px;
-  margin: 100px auto;
-  background: #000000;
-  color: #000000;
-  border-radius: 50%;
-  box-shadow: 35.2px 0,-35.2px 0;
-  animation: dots-u8fzfthg 1s infinite linear alternate;
-}
-
-@keyframes dots-u8fzfthg {
-  0% {
-     box-shadow: 35.2px 0,-35.2px 0;
-     background: ;
+	align-items: center;
+	margin: 10px 0;
   }
-
-  33% {
-     box-shadow: 35.2px 0,-35.2px 0 rgba(0,0,0,0.13);
-     background: rgba(0,0,0,0.13);
+  
+  .empty-list {
+	color: #777;
   }
-
-  66% {
-     box-shadow: 35.2px 0 rgba(0,0,0,0.13),-35.2px 0;
-     background: rgba(0,0,0,0.13);
-  }
-}
-
-.error-notice {
-  margin: 5px; /* Make sure to keep some distance from all sides */
-}
-
-.oaerror {
-  background-color: #ffffff;
-  padding: 20px;
-  border: 1px solid #eee;
-  border-left-width: 5px;
-  border-radius: 3px;
-  margin: 10px auto;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
-}
-
-.danger {
-  border-left-color: #d9534f; /* Left side border color */
-  background-color: rgba(217, 83, 79, 0.1); /*Same color as the left border with reduced alpha to 0.1*/
-}
-
-.danger strong {
-  color: #d9534f;
-}
-
-.is-done {
-	text-decoration: line-through;
-}
+  
